@@ -4,4 +4,11 @@ import './registerServiceWorker'
 import router from './router'
 import store from './store'
 
-createApp(App).use(store).use(router).mount('#app')
+import ElementUI from 'element-ui';
+import 'element-ui/lib/theme-chalk/index.css';
+
+const app = createApp(App)
+app.use(router)
+app.use(store)
+app.use(ElementUI)
+app.mount('#app')

@@ -1,31 +1,24 @@
 import axios from 'axios'
 import qs from 'qs'
+import resCodehandler from './resCodehandler'
 
 // create an axios instance with a custom config
-const instance = axios.create({
+const service = axios.create({
   baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
   timeout: 5000, // request timeout
   headers: {
+    "Content-Type": "application/x-www-form-urlencoded;charset=utf-8",
     'X-Custom-Header': 'foobar'
   }, // The custom headers
 
-  // `transformRequest` allows changes to the request data before it is sent to the server
-  // This is only applicable for request methods 'PUT', 'POST', and 'PATCH'
-  // The last function in the array must return a string or an instance of Buffer, ArrayBuffer,
-  // FormData or Stream
-  // You may modify the headers object.
   transformRequest: [function (data, headers) {
     // Do whatever you want to transform the data
-
     data = qs.stringify(data); // 使用工具qs来处理参数，处理发送请求的参数，序列化字符串
     return data;
   }],
 
-  // `transformResponse` allows changes to the response data to be made before
-  // it is passed to then/catch
   transformResponse: [function (data) {
     // Do whatever you want to transform the data
-
     return data;
   }],
 })
@@ -42,34 +35,24 @@ const requestHandler = config => {
 const requestErrHandler = error => {
   // do something with request error
 
-  console.log(error) // for debug
+  console.log(`error : ${error}`) // for debug
   return Promise.reject(error)
 }
 
 const responseHandler = response => {
   // Do something with response data
 
-  /**
-   * If you want to get http information such as headers or status
-   * Please return  response => response
-   */
-
-  /**
-   * Determine the request status by custom code
-   * Here is just an example
-   * You can also judge the status by HTTP Status Code
-   */
-
   const res = response.data
 
   // if the custom code is not Logically correct, it is judged as an error.
-  if (res.code !== 200) {
+  // 在这里可以对response进行业务上的逻辑判断，具体逻辑可以自定义。
+  if (res.code !== 20000) {
 
-    // if returning a value of Promise.reject(),it is judged as an error
+    // 通过Promise.reject方法，返回值会被认为是error处理
     return Promise.reject(new Error(res.message || 'Error'))
   }
 
-  // return anything you want, such as res above
+  // 可以自定义返回的数据，比如可以只返回res
   return response
 }
 
@@ -77,16 +60,18 @@ const responseHandler = response => {
 const responseErrHandler = error => {
   // Do something with response error
 
+  resCodehandler(error);
+
   console.log(`error : ${error}`) // for debug
   return Promise.reject(error)
 }
 
 
 // Add a request interceptor
-instance.interceptors.request.use(requestHandler, requestErrHandler)
+service.interceptors.request.use(requestHandler, requestErrHandler)
 
 // Add a response interceptor
-instance.interceptors.response.use(responseHandler, responseErrHandler
+service.interceptors.response.use(responseHandler, responseErrHandler
 )
 
-export default instance
+export default service
