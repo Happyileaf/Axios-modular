@@ -8,11 +8,13 @@ const service = axios.create({
   timeout: 5000, // request timeout
   headers: {
     "Content-Type": "application/x-www-form-urlencoded;charset=utf-8",
-    'X-Custom-Header': 'foobar'
+    // "Content-Type": "application/json;charset=utf-8",
+    // 'X-Custom-Header': 'foobar'
   }, // The custom headers
 
   transformRequest: [function (data, headers) {
     // Do whatever you want to transform the data
+    console.log(headers)
     data = qs.stringify(data); // 使用工具qs来处理参数，处理发送请求的参数，序列化字符串
     return data;
   }],
@@ -46,7 +48,7 @@ const responseHandler = response => {
 
   // if the custom code is not Logically correct, it is judged as an error.
   // 在这里可以对response进行业务上的逻辑判断，具体逻辑可以自定义。
-  if (res.code !== 20000) {
+  if (res.code && res.code !== 20000) {
 
     // 通过Promise.reject方法，返回值会被认为是error处理
     return Promise.reject(new Error(res.message || 'Error'))

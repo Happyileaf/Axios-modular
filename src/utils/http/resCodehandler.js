@@ -1,4 +1,4 @@
-import { Message } from "element-ui";
+import { Message } from "element-plus";
 import router from '../../router'
 
 const CODE_MESSAGE = {
@@ -32,6 +32,7 @@ const resCodehandler = function (res) {
     switch (res.status) {
         case 400: {
             info(res.status)
+            break
         }
         case 401: {
             //对于相同的HTTP状态码，如果业务还需要细分，可以再添加一个属性来区分
@@ -57,6 +58,7 @@ const resCodehandler = function (res) {
                     redirect: router.currentRoute.fullPath
                 }
             });
+            break
         }
         case 404: {
             info(res.status)
@@ -65,24 +67,31 @@ const resCodehandler = function (res) {
             // router.push({
             //     path: "/error/404"
             // });
+            break
         }
         case 406: {
             info(res.status)
+            break
         }
         case 500: {
             info(res.status)
+            break
         }
         case 502: {
             info(res.status)
+            break
         }
         case 503: {
             info(res.status)
+            break
         }
         case 504: {
             info(res.status)
+            break
         }
         default:{
             info(res.status,'未知错误')
+            break
         }
     }
 }
